@@ -50,6 +50,13 @@ st.markdown("""
         font-weight: 600;
         display: inline-block;
     }
+    .url-label {
+        font-weight: 600;
+        margin-top: 0.5rem;
+        margin-bottom: 0.2rem;
+        font-size: 0.85rem;
+        color: #1e293b;
+    }
     .url-link {
         font-family: monospace;
         font-size: 0.8rem;
@@ -145,19 +152,22 @@ else:
     current_version = "none"
     current_url = "none"
 
-# ------------------- Current Firmware Card -------------------
+# ------------------- Current Firmware Card (new layout) -------------------
 st.markdown('<div class="main-card">', unsafe_allow_html=True)
 st.markdown("**📟 Currently deployed firmware**")
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.markdown(f"<span class='version-badge'>Version {current_version}</span>", unsafe_allow_html=True)
-with col2:
-    # Add "URL:" label and icon
-    st.markdown("**URL:** 🔗", unsafe_allow_html=True)
-    if current_url != "none" and current_url.startswith("http"):
-        st.markdown(f"<a href='{current_url}' target='_blank' class='url-link'>{current_url}</a>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<span class='url-link'>{current_url}</span>", unsafe_allow_html=True)
+
+# Version badge
+st.markdown(f"<span class='version-badge'>Version {current_version}</span>", unsafe_allow_html=True)
+
+# URL label
+st.markdown('<div class="url-label">URL:</div>', unsafe_allow_html=True)
+
+# Icon + clickable link
+if current_url != "none" and current_url.startswith("http"):
+    st.markdown(f"🔗 <a href='{current_url}' target='_blank' class='url-link'>{current_url}</a>", unsafe_allow_html=True)
+else:
+    st.markdown(f"🔗 <span class='url-link'>{current_url}</span>", unsafe_allow_html=True)
+
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------- Publish Card -------------------
@@ -185,7 +195,7 @@ if st.button("🚀 Publish update", use_container_width=True):
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# ------------------- Footer with bigger logo (width=100) -------------------
+# ------------------- Footer with bigger logo -------------------
 st.markdown('<div class="footer">', unsafe_allow_html=True)
 if logo_img:
     st.image(logo_img, width=100, output_format="PNG")
