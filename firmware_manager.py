@@ -13,132 +13,101 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ------------------- Custom CSS for Modern UI -------------------
+# ------------------- Compact CSS (No extra whitespace) -------------------
 st.markdown("""
 <style>
-    /* Main background and fonts */
-    .stApp {
-        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+    /* Remove default padding/margins */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 0rem !important;
+        max-width: 700px !important;
     }
-    
-    /* Card style for main content */
+    /* Hide default streamlit top blank space */
+    header {
+        display: none;
+    }
+    /* Main card style */
     .main-card {
         background: white;
-        border-radius: 24px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        margin: 1rem 0;
+        border-radius: 20px;
+        padding: 1.2rem 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 1rem;
     }
-    
-    /* Headers */
+    /* Headings */
     h1 {
-        font-size: 2.2rem !important;
+        font-size: 1.8rem !important;
         font-weight: 700 !important;
-        background: linear-gradient(120deg, #1e2a3a, #0f172a);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Subheader */
-    .subhead {
-        font-size: 1rem;
-        color: #4b5563;
-        margin-bottom: 2rem;
-        border-left: 4px solid #3b82f6;
-        padding-left: 1rem;
-    }
-    
-    /* Info boxes */
-    .info-box {
-        background: #f8fafc;
-        border-radius: 16px;
-        padding: 1.2rem;
-        border: 1px solid #e2e8f0;
-        margin: 1rem 0;
-    }
-    
-    /* Button */
-    .stButton button {
-        background: linear-gradient(95deg, #2563eb, #1e40af);
-        color: white;
-        border: none;
-        border-radius: 40px;
-        padding: 0.6rem 2rem;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .stButton button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(37,99,235,0.3);
-        background: linear-gradient(95deg, #1e40af, #1e3a8a);
-    }
-    
-    /* Input fields */
-    .stTextInput input {
-        border-radius: 12px;
-        border: 1px solid #cbd5e1;
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-    }
-    .stTextInput input:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
-    }
-    
-    /* Footer */
-    .footer {
+        margin-top: 0 !important;
+        margin-bottom: 0.25rem !important;
         text-align: center;
-        margin-top: 3rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #e2e8f0;
-        font-size: 0.8rem;
-        color: #6c757d;
     }
-    
-    /* Logo container */
-    .logo-container {
-        display: flex;
-        justify-content: center;
+    .subhead {
+        text-align: center;
+        color: #4b5563;
         margin-bottom: 1rem;
+        font-size: 0.9rem;
     }
-    .company-logo {
-        max-height: 80px;
-        margin-bottom: 1rem;
-    }
-    
     /* Version badge */
     .version-badge {
         background: #e6f0ff;
         color: #1e40af;
         border-radius: 40px;
         padding: 0.2rem 0.8rem;
-        font-size: 0.75rem;
+        font-size: 0.85rem;
         font-weight: 600;
         display: inline-block;
     }
-    
-    /* Success message */
-    .stSuccess {
-        background: #dcfce7;
-        border-left: 5px solid #22c55e;
-        border-radius: 12px;
+    /* URL line – wrap long URLs */
+    .url-text {
+        font-family: monospace;
+        font-size: 0.8rem;
+        background: #f1f5f9;
+        padding: 0.3rem 0.6rem;
+        border-radius: 8px;
+        word-break: break-all;
+        white-space: normal;
+        display: inline-block;
+        max-width: 100%;
+    }
+    /* Button */
+    .stButton button {
+        background: linear-gradient(95deg, #2563eb, #1e40af);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0.4rem 1.5rem;
+        font-weight: 600;
+        width: 100%;
+    }
+    /* Footer minimal */
+    .footer {
+        text-align: center;
+        margin-top: 1rem;
+        padding-top: 0.5rem;
+        font-size: 0.7rem;
+        color: #9ca3af;
+    }
+    /* Reduce spacing between elements */
+    .element-container {
+        margin-bottom: 0.5rem !important;
+    }
+    .stTextInput > div {
+        margin-bottom: 0.5rem;
+    }
+    hr {
+        margin: 0.5rem 0;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ------------------- Load Logo -------------------
 def load_logo():
-    # Try to load local logo file
     if os.path.exists("logo.png"):
         return Image.open("logo.png")
     elif os.path.exists("logo.jpg"):
         return Image.open("logo.jpg")
-    else:
-        # Fallback: use a custom text logo if file missing
-        return None
+    return None
 
 logo_img = load_logo()
 
@@ -155,13 +124,13 @@ def init_firebase():
             cred_dict = json.loads(st.secrets["FIREBASE_CRED"])
             cred = credentials.Certificate(cred_dict)
         except Exception as e:
-            st.error(f"Invalid FIREBASE_CRED secret: {e}")
+            st.error(f"Firebase cred error: {e}")
             st.stop()
     else:
         if os.path.exists("ota.json"):
             cred = credentials.Certificate("ota.json")
         else:
-            st.error("Firebase credentials not found.")
+            st.error("Firebase credentials missing.")
             st.stop()
 
     firebase_admin.initialize_app(cred, {
@@ -171,19 +140,18 @@ def init_firebase():
 init_firebase()
 ref = db.reference('/OTA')
 
-# ------------------- UI Header with Logo -------------------
+# ------------------- Header with Logo (compact) -------------------
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     if logo_img:
         st.image(logo_img, use_container_width=True, output_format="PNG")
     else:
-        st.markdown('<div class="logo-container"><span style="font-size:2rem;">⚡</span></div>', unsafe_allow_html=True)
+        st.markdown("### ⚡ LSS3")
 
-st.markdown('<h1 style="text-align: center;">LSS3 OTA Manager</h1>', unsafe_allow_html=True)
-st.markdown('<p style="text-align: center; color: #4b5563;">Firmware updates made simple</p>', unsafe_allow_html=True)
-st.markdown('<div class="subhead">📡 Manage over‑the‑air updates for your LSS3 devices</div>', unsafe_allow_html=True)
+st.markdown("<h1>LSS3 OTA Manager</h1>", unsafe_allow_html=True)
+st.markdown('<div class="subhead">Manage over‑the‑air updates for your LSS3 devices</div>', unsafe_allow_html=True)
 
-# ------------------- Load Current Firmware Info -------------------
+# ------------------- Load Current Firmware -------------------
 current_data = ref.get()
 if current_data and isinstance(current_data, dict):
     if 'app' in current_data:
@@ -196,45 +164,41 @@ else:
     current_version = "none"
     current_url = "none"
 
-# ------------------- Current Status Card -------------------
+# ------------------- Current Firmware Card (compact) -------------------
 st.markdown('<div class="main-card">', unsafe_allow_html=True)
-st.markdown("### 📟 Currently deployed firmware")
-col_a, col_b = st.columns(2)
-with col_a:
-    st.markdown(f"**Version**  <span class='version-badge'>{current_version}</span>", unsafe_allow_html=True)
-with col_b:
-    st.markdown(f"**URL**  `{current_url}`", unsafe_allow_html=True)
+st.markdown("**📟 Currently deployed firmware**")
+col_ver, col_url = st.columns([1, 2])
+with col_ver:
+    st.markdown(f"<span class='version-badge'>Version {current_version}</span>", unsafe_allow_html=True)
+with col_url:
+    # URL shown inline, wrapped
+    st.markdown(f"<span class='url-text'>📎 {current_url}</span>", unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# ------------------- Publish New Firmware Card -------------------
+# ------------------- Publish New Firmware Card (compact) -------------------
 st.markdown('<div class="main-card">', unsafe_allow_html=True)
-st.markdown("### ✏️ Publish new firmware")
+st.markdown("**✏️ Publish new firmware**")
 
-new_version = st.text_input("Firmware version", placeholder="e.g., 1.2.3", key="version_input")
-new_url = st.text_input("Firmware binary URL", placeholder="https://example.com/firmware.bin", key="url_input")
+new_version = st.text_input("Version", placeholder="e.g., 1.2.3", key="ver", label_visibility="collapsed")
+new_url = st.text_input("Firmware URL", placeholder="https://...", key="url", label_visibility="collapsed")
 
-col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
-with col_btn2:
-    if st.button("🚀 Publish update", use_container_width=True):
-        if not new_version or not new_url:
-            st.error("Both version and URL are required.", icon="⚠️")
-        else:
-            data_to_write = {
-                "app": {
-                    "version": new_version,
-                    "url": new_url
-                }
+# Publish button
+if st.button("🚀 Publish update", use_container_width=True):
+    if not new_version or not new_url:
+        st.error("Both version and URL are required.", icon="⚠️")
+    else:
+        data_to_write = {
+            "app": {
+                "version": new_version,
+                "url": new_url
             }
-            ref.set(data_to_write)
-            st.success(f"✅ Version **{new_version}** published successfully!")
-            st.balloons()
-            st.rerun()
+        }
+        ref.set(data_to_write)
+        st.success(f"✅ Version **{new_version}** published!")
+        st.balloons()  # balloons go up
+        st.rerun()
+
 st.markdown('</div>', unsafe_allow_html=True)
 
-# ------------------- Footer with Company Logo -------------------
-st.markdown('<div class="footer">', unsafe_allow_html=True)
-if logo_img:
-    st.image(logo_img, width=100, output_format="PNG")
-st.markdown("**DeZignArena** — You Dream, We Design")
-st.markdown("Devices check for updates every 5 minutes or on reboot.")
-st.markdown('</div>', unsafe_allow_html=True)
+# ------------------- Minimal Footer (no device check message) -------------------
+st.markdown('<div class="footer">DeZignArena — You Dream, We Design</div>', unsafe_allow_html=True)
